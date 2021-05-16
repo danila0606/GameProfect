@@ -11,7 +11,7 @@ class Entity;
 #define P_WIDTH 16
 #define P_HEIGHT 16
 
-#define LIVES 1
+#define LIVES 6
 
 enum class Player_state {
 	stay,

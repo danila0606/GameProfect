@@ -29,7 +29,7 @@ bool Level::LoadFromFile(const std::string& filename)
 
    
     tinyxml2::XMLElement* image;
-    image = tilesetElement->FirstChildElement("image");
+    image = tilesetElement->FirstChildElement("image_");
     std::string imagepath = image->Attribute("source");
 
     sf::Image img;
@@ -144,28 +144,28 @@ bool Level::LoadFromFile(const std::string& filename)
                 }
                 else object.id = 0;
 
-                if (!std::strcmp(objectElement->Attribute("type"),"solid"))
+                if (!std::strcmp(objectElement->Attribute("type_"),"solid"))
                 {
                     object.type = Object_type::solid;
                 }
-                else if (!std::strcmp(objectElement->Attribute("type"),"jump"))
+                else if (!std::strcmp(objectElement->Attribute("type_"),"jump"))
                 {
                     object.type = Object_type::jumper;
                 }
-                else if (!std::strcmp(objectElement->Attribute("type"),"tp"))
+                else if (!std::strcmp(objectElement->Attribute("type_"),"tp"))
                 {
                     object.type = Object_type::tp;
                 }
-                else if (!std::strcmp(objectElement->Attribute("type"),"player"))
+                else if (!std::strcmp(objectElement->Attribute("type_"),"player"))
                 {
                     
                     object.type = Object_type::player;
                 }
-                else if (!std::strcmp(objectElement->Attribute("type"),"Coca"))
+                else if (!std::strcmp(objectElement->Attribute("type_"),"Coca"))
                 {
                     object.type = Object_type::Coca;
                 }
-                else if (!std::strcmp(objectElement->Attribute("type"),"Ghost"))
+                else if (!std::strcmp(objectElement->Attribute("type_"),"Ghost"))
                 {
                     object.type = Object_type::Ghost;
                 }
@@ -178,8 +178,8 @@ bool Level::LoadFromFile(const std::string& filename)
                 }
                 else object.name = "noname";
 
-                int x = objectElement->Int64Attribute("x");
-                int y = objectElement->Int64Attribute("y");
+                int x = objectElement->Int64Attribute("x_");
+                int y = objectElement->Int64Attribute("y_");
 
                 object.sprite.setTexture(tilesetImage);
                 object.sprite.setTextureRect(sf::Rect<int>(0, 0, 0, 0));

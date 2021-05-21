@@ -50,43 +50,43 @@ public:
 	Entity(
 		const std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim, 
-		Entity_type type_);
+		Entity_type type);
 
 	virtual void Walk(const float X, const float Y) = 0;
-	virtual void update(const float X, const float Y,const float& time, const std::vector<Object>& obj) = 0;
-	virtual void Colision(const char d, const std::vector<Object>& obj) = 0;
+	virtual void Update(const float X, const float Y, const float& time, const std::vector<Object>& obj) = 0;
+	virtual void Collide(const char d, const std::vector<Object>& obj) = 0;
 	void draw(sf::RenderWindow& window) {
-		anim_map.draw(window, x, y);
+        anim_map_.Draw(window, x_, y_);
 	}
-	sf::FloatRect GetRect() { return sf::FloatRect(x, y, w, h); };
-	void Health(int h) { health += h; };
+	sf::FloatRect GetRect() { return sf::FloatRect(x_, y_, w_, h_); };
+	void Health(int h) { health_ += h; };
 
-	std::string GetName() const { return name; };
-	Entity_type GetType() const { return type; };
-	bool GetLife() const { return life; };
-	void Life(const bool l) { life = l; };
-	bool GetDead() const { return dead; };
-	void Dead(const bool l) { dead = l; };
+	std::string GetName() const { return name_; };
+	Entity_type GetType() const { return type_; };
+	bool GetLife() const { return life_; };
+	void Life(const bool l) { life_ = l; };
+	bool GetDead() const { return dead_; };
+	void Dead(const bool l) { dead_ = l; };
 
-    float GetX() const {return x;};
-    float GetY() const {return y;};
+    float GetX() const {return x_;};
+    float GetY() const {return y_;};
 protected:
-	std::string name;
+	std::string name_;
 
-	Entity_state state;
-	Entity_feeling feel;
-	Entity_type type;
+	Entity_state state_;
+	Entity_feeling feel_;
+	Entity_type type_;
 
-	AnimationMap anim_map;
-	bool dir; //right - true, left - false
+	AnimationMap anim_map_;
+	bool dir_; //right - true, left - false
 	//bool shoot;
-	bool life, dead;
+	bool life_, dead_;
 	
-	float deadtime;
+	float deadtime_;
 
-	float x{}, y{}, dx{}, dy{};
-	float w{}, h{};
-	int health{};
+	float x_{}, y_{}, dx_{}, dy_{};
+	float w_{}, h_{};
+	int health_{};
 
 public:
     virtual ~Entity() = default;
@@ -98,8 +98,8 @@ public:
 		std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim);
 
-	void update(const float X, const float Y,const float& time, const std::vector<Object>& obj);
-	void Colision(const char d, const std::vector<Object>& obj);
+	void Update(const float X, const float Y, const float& time, const std::vector<Object>& obj);
+	void Collide(const char d, const std::vector<Object>& obj);
 	void Walk(const float X, const float Y);
 
     ~Coca() = default;
@@ -111,10 +111,10 @@ public:
 		std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim);
 
-	sf::FloatRect GetRect() const { return sf::FloatRect(x, y, w, h); };
+	sf::FloatRect GetRect() const { return sf::FloatRect(x_, y_, w_, h_); };
 
-	void update(const float X, const float Y, const float& time, const std::vector<Object>& obj);
-	void Colision(const char d, const std::vector<Object>& obj);
+	void Update(const float X, const float Y, const float& time, const std::vector<Object>& obj);
+	void Collide(const char d, const std::vector<Object>& obj);
 	void Walk(const float X, const float Y);
 
 	~Ghost() = default;
@@ -126,9 +126,9 @@ public:
 		const std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim, const Entity_type _type);
 
-	void Colision(const char d, const std::vector<Object>& obj);
+	void Collide(const char d, const std::vector<Object>& obj);
 
-	virtual void update(const float X, const float Y, const float& time, const std::vector<Object>& obj) = 0;
+	virtual void Update(const float X, const float Y, const float& time, const std::vector<Object>& obj) = 0;
 	virtual void Walk(const float X, const float Y) = 0;
 };
 
@@ -138,6 +138,6 @@ public:
 		const std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim, bool dir);
 
-	void update(const float X, const float Y, const float& time, const std::vector<Object>& obj);
+	void Update(const float X, const float Y, const float& time, const std::vector<Object>& obj);
 	void Walk(const float X, const float Y);
 };

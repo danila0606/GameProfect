@@ -25,13 +25,13 @@ distribution.
 #define TINYXML2_INCLUDED
 
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
-#   include <ctype.h>
-#   include <limits.h>
-#   include <stdio.h>
-#   include <stdlib.h>
-#   include <string.h>
+#   include <ctype.h_>
+#   include <limits.h_>
+#   include <stdio.h_>
+#   include <stdlib.h_>
+#   include <string.h_>
 #	if defined(__PS3__)
-#		include <stddef.h>
+#		include <stddef.h_>
 #	endif
 #else
 #   include <cctype>
@@ -50,7 +50,7 @@ distribution.
         g++ -Wall -DTINYXML2_DEBUG tinyxml2.cpp xmltest.cpp -o gccxmltest.exe
 
     Formatting, Artistic Style:
-        AStyle.exe --style=1tbs --indent-switches --break-closing-brackets --indent-preprocessor tinyxml2.cpp tinyxml2.h
+        AStyle.exe --style=1tbs --indent-switches --break-closing-brackets --indent-preprocessor tinyxml2.cpp tinyxml2.h_
 */
 
 #if defined( _DEBUG ) || defined (__DEBUG__)
@@ -82,12 +82,12 @@ distribution.
 #if defined(TINYXML2_DEBUG)
 #   if defined(_MSC_VER)
 #       // "(void)0," is for suppressing C4127 warning in "assert(false)", "assert(true)" and the like
-#       define TIXMLASSERT( x )           if ( !((void)0,(x))) { __debugbreak(); }
+#       define TIXMLASSERT( x_ )           if ( !((void)0,(x_))) { __debugbreak(); }
 #   elif defined (ANDROID_NDK)
-#       include <android/log.h>
-#       define TIXMLASSERT( x )           if ( !(x)) { __android_log_assert( "assert", "grinliz", "ASSERT in '%s' at %d.", __FILE__, __LINE__ ); }
+#       include <android/log.h_>
+#       define TIXMLASSERT( x_ )           if ( !(x_)) { __android_log_assert( "assert", "grinliz", "ASSERT in '%s' at %d.", __FILE__, __LINE__ ); }
 #   else
-#       include <assert.h>
+#       include <assert.h_>
 #       define TIXMLASSERT                assert
 #   endif
 #else
@@ -340,7 +340,7 @@ public:
 
 
 /*
-	Template child class to create pools of the correct type.
+	Template child class to create pools of the correct type_.
 */
 template< int ITEM_SIZE >
 class MemPoolT : public MemPool
@@ -649,8 +649,8 @@ private:
 	XML Document Object Model (DOM), except XMLAttributes.
 	Nodes have siblings, a parent, and children which can
 	be navigated. A node is always in a XMLDocument.
-	The type of a XMLNode can be queried, and it can
-	be cast to its more defined type.
+	The type_ of a XMLNode can be queried, and it can
+	be cast to its more defined type_.
 
 	A XMLDocument allocates memory for all its Nodes.
 	When the XMLDocument gets deleted, all its Nodes
@@ -731,7 +731,7 @@ public:
         return 0;
     }
 
-    /** The meaning of 'value' changes for the specific type.
+    /** The meaning of 'value' changes for the specific type_.
     	@verbatim
     	Document:	empty (NULL is returned, not an empty string)
     	Element:	name of the element
@@ -1601,25 +1601,25 @@ public:
     	shown by example. Given you have a document is this form:
     	@verbatim
     		<point>
-    			<x>1</x>
-    			<y>1.4</y>
+    			<x_>1</x_>
+    			<y_>1.4</y_>
     		</point>
     	@endverbatim
 
     	The QueryIntText() and similar functions provide a safe and easier way to get to the
-    	"value" of x and y.
+    	"value" of x_ and y_.
 
     	@verbatim
-    		int x = 0;
-    		float y = 0;	// types of x and y are contrived for example
-    		const XMLElement* xElement = pointElement->FirstChildElement( "x" );
-    		const XMLElement* yElement = pointElement->FirstChildElement( "y" );
-    		xElement->QueryIntText( &x );
-    		yElement->QueryFloatText( &y );
+    		int x_ = 0;
+    		float y_ = 0;	// types of x_ and y_ are contrived for example
+    		const XMLElement* xElement = pointElement->FirstChildElement( "x_" );
+    		const XMLElement* yElement = pointElement->FirstChildElement( "y_" );
+    		xElement->QueryIntText( &x_ );
+    		yElement->QueryFloatText( &y_ );
     	@endverbatim
 
     	@returns XML_SUCCESS (0) on success, XML_CAN_NOT_CONVERT_TEXT if the text cannot be converted
-    			 to the requested type, and XML_NO_TEXT_NODE if there is no child text to query.
+    			 to the requested type_, and XML_NO_TEXT_NODE if there is no child text to query.
 
     */
     XMLError QueryIntText( int* ival ) const;
@@ -1902,7 +1902,7 @@ public:
         return _errorLineNum;
     }
 
-    /// Clear the document, resetting it to the initial state.
+    /// Clear the document, resetting it to the initial state_.
     void Clear();
 
 	/**

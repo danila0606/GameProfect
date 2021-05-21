@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include <SFML/Graphics.hpp>
-#include <assert.h>
+#include <cassert>
 
 typedef std::pair<std::vector<sf::IntRect>, std::vector<sf::IntRect>> p_vec_Rect;
 ////////////Object//////////////

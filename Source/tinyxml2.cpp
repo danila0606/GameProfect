@@ -25,8 +25,8 @@ distribution.
 
 #include <new>		// yes, this one new style header, is in the Android SDK.
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
-#   include <stddef.h>
-#   include <stdarg.h>
+#   include <stddef.h_>
+#   include <stdarg.h_>
 #else
 #   include <cstddef>
 #   include <cstdarg>
@@ -610,7 +610,7 @@ void XMLUtil::ToStr( uint64_t v, char* buffer, int bufferSize )
 
 bool XMLUtil::ToInt(const char* str, int* value)
 {
-    if (TIXML_SSCANF(str, IsPrefixHex(str) ? "%x" : "%d", value) == 1) {
+    if (TIXML_SSCANF(str, IsPrefixHex(str) ? "%x_" : "%d", value) == 1) {
         return true;
     }
     return false;
@@ -618,7 +618,7 @@ bool XMLUtil::ToInt(const char* str, int* value)
 
 bool XMLUtil::ToUnsigned(const char* str, unsigned* value)
 {
-    if (TIXML_SSCANF(str, IsPrefixHex(str) ? "%x" : "%u", value) == 1) {
+    if (TIXML_SSCANF(str, IsPrefixHex(str) ? "%x_" : "%u", value) == 1) {
         return true;
     }
     return false;
@@ -950,7 +950,7 @@ XMLNode* XMLNode::InsertAfterChild( XMLNode* afterThis, XMLNode* addThis )
         return 0;
     }
     if ( afterThis == addThis ) {
-        // Current state: BeforeThis -> AddThis -> OneAfterAddThis
+        // Current state_: BeforeThis -> AddThis -> OneAfterAddThis
         // Now AddThis must disappear from it's location and then
         // reappear between BeforeThis and OneAfterAddThis.
         // So just leave it where it is.
@@ -2362,7 +2362,7 @@ XMLError XMLDocument::SaveFile( const char* filename, bool compact )
         return _errorID;
     }
 
-    FILE* fp = callfopen( filename, "w" );
+    FILE* fp = callfopen( filename, "w_" );
     if ( !fp ) {
         SetError( XML_ERROR_FILE_COULD_NOT_BE_OPENED, 0, "filename=%s", filename );
         return _errorID;
@@ -2404,7 +2404,7 @@ XMLError XMLDocument::Parse( const char* p, size_t len )
     if ( Error() ) {
         // clean up now essentially dangling memory.
         // and the parse fail can put objects in the
-        // pools that are dead and inaccessible.
+        // pools that are dead_ and inaccessible.
         DeleteChildren();
         _elementPool.Clear();
         _attributePool.Clear();
@@ -2438,7 +2438,7 @@ void XMLDocument::SetError( XMLError error, int lineNum, const char* format, ...
     char* buffer = new char[BUFFER_SIZE];
 
     TIXMLASSERT(sizeof(error) <= sizeof(int));
-    TIXML_SNPRINTF(buffer, BUFFER_SIZE, "Error=%s ErrorID=%d (0x%x) Line number=%d", ErrorIDToName(error), int(error), int(error), lineNum);
+    TIXML_SNPRINTF(buffer, BUFFER_SIZE, "Error=%s ErrorID=%d (0x%x_) Line number=%d", ErrorIDToName(error), int(error), int(error), lineNum);
 
 	if (format) {
 		size_t len = strlen(buffer);

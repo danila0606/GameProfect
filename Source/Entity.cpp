@@ -3,15 +3,15 @@
 Entity::Entity(
 	const std::map <std::string, p_vec_Rect>& anims,
 	const std::string& file, const std::string& first_anim, 
-	Entity_type type_) :
-	anim_map(file, anims, first_anim),
-	name("Entity"), type(type_)
+	Entity_type type) :
+        anim_map_(file, anims, first_anim),
+        name_("Entity"), type_(type)
 {
-	dir = true; life = true; dead = false;
-	feel = Entity_feeling::no_hit;
-	state = Entity_state::stay;
+    dir_ = true; life_ = true; dead_ = false;
+    feel_ = Entity_feeling::no_hit;
+    state_ = Entity_state::stay;
 
-	deadtime = 0;
+    deadtime_ = 0;
 }
 
 ///////////////////////Coca/////////////////////////////////
@@ -21,15 +21,15 @@ Coca::Coca(const float X, const float Y,
 	const std::string& file, const std::string& first_anim) :
 	Entity(anims, file, first_anim, Entity_type::Coca)
 {
-	health = 100;
-    w=COCA_W; h = COCA_H;
-	x = X; y = Y;
-	dx = 0; dy = 0;
-	name = "Coca";
+    health_ = 40;
+    w_=COCA_W; h_ = COCA_H;
+    x_ = X; y_ = Y;
+    dx_ = 0; dy_ = 0;
+    name_ = "Coca";
 }
 void Coca::Walk(const float X, const float Y) {
-	float dis_x = X - x;
-    float dis_y = Y - y;
+	float dis_x = X - x_;
+    float dis_y = Y - y_;
     float dis = std::sqrt(int(dis_x * dis_x + dis_y * dis_y));
 	static size_t r = 0;
 
@@ -43,74 +43,74 @@ void Coca::Walk(const float X, const float Y) {
 	        int k_j = std::abs(rand() % 2);
 
             switch (k) {
-                case 0 : {dx = 0.03; dir = true; state = Entity_state::go; break;}
-                case 1 : {dx = 0; state = Entity_state::stay; break;}
-                case 2 : {dx = -0.03; dir = false; state = Entity_state::go; break;}
+                case 0 : { dx_ = 0.03; dir_ = true; state_ = Entity_state::go; break;}
+                case 1 : { dx_ = 0; state_ = Entity_state::stay; break;}
+                case 2 : { dx_ = -0.03; dir_ = false; state_ = Entity_state::go; break;}
             }
 
-            if (k_j) dy = -0.20;
+            if (k_j) dy_ = -0.20;
 	    }
-		//state = Entity_state::stay;
-		//dx = 0;
+		//state_ = Entity_state::stay;
+		//dx_ = 0;
 	}
 	else {
-		state = Entity_state::go;
+        state_ = Entity_state::go;
 		if (dis_x >= 0) {
-			dir = true;
-			dx = 0.03;
+            dir_ = true;
+            dx_ = 0.03;
 		}
 		else {
-			dx = -0.03;
-			dir = false;
+            dx_ = -0.03;
+            dir_ = false;
 		}
 	}
 }
-void Coca::update(const float X, const float Y,const float& time, const std::vector<Object>& obj) {
-	if (dead) {
-		deadtime += time / 800000;
-		if (deadtime >= 3)
-			life = false;
+void Coca::Update(const float X, const float Y, const float& time, const std::vector<Object>& obj) {
+	if (dead_) {
+        deadtime_ += time / 800000;
+		if (deadtime_ >= 3)
+            life_ = false;
 		else {
-			anim_map.tick(time);
+            anim_map_.Tick(time);
 		}
 	}
 	else {
 		Walk(X, Y);
-		if (state == Entity_state::stay)
-			anim_map.setAnimation("stay");
-		if (state == Entity_state::go)
-			anim_map.setAnimation("go");
-		if (state == Entity_state::jump)
-			anim_map.setAnimation("jump");
+		if (state_ == Entity_state::stay)
+            anim_map_.SetAnimation("stay");
+		if (state_ == Entity_state::go)
+            anim_map_.SetAnimation("go");
+		if (state_ == Entity_state::jump)
+            anim_map_.SetAnimation("jump");
 
-		anim_map.Direction(dir);
+        anim_map_.ChangeDirection(dir_);
 
-		x += dx * time / 800;
-		Colision('x', obj);
+        x_ += dx_ * time / 800;
+        Collide('x', obj);
 
-		dy += time * 0.00000029;
-		y += dy * time / 800;
-		Colision('y', obj);
+        dy_ += time * 0.00000029;
+        y_ += dy_ * time / 800;
+        Collide('y', obj);
 
-		if (health <= 0) {
-			dead = true;
-			anim_map.setAnimation("dead");
-			dx = 0; dy = 0;
+		if (health_ <= 0) {
+            dead_ = true;
+            anim_map_.SetAnimation("dead_");
+            dx_ = 0; dy_ = 0;
 		}
 
-		anim_map.tick(time);
+        anim_map_.Tick(time);
 	}
 }
-void Coca::Colision(const char d, const std::vector<Object>& obj) {
+void Coca::Collide(const char d, const std::vector<Object>& obj) {
 	for (int i = 0; i < obj.size(); i++)
 		if (GetRect().intersects(obj[i].rect))
 		{
 			if (obj[i].type == Object_type::solid)
 			{
-				if (dy > 0 && d == 'y') { y = obj[i].rect.top - h;  dy = 0;   state = Entity_state::stay; }
-				else if (dy < 0 && d == 'y') { y = obj[i].rect.top + obj[i].rect.height;   dy = 0; }
-				else if (dx > 0 && d == 'x') { x = obj[i].rect.left - w; }
-				else if (dx < 0 && d == 'x') { x = obj[i].rect.left + obj[i].rect.width; }
+				if (dy_ > 0 && d == 'y') { y_ = obj[i].rect.top - h_; dy_ = 0; state_ = Entity_state::stay; }
+				else if (dy_ < 0 && d == 'y') { y_ = obj[i].rect.top + obj[i].rect.height; dy_ = 0; }
+				else if (dx_ > 0 && d == 'x') { x_ = obj[i].rect.left - w_; }
+				else if (dx_ < 0 && d == 'x') { x_ = obj[i].rect.left + obj[i].rect.width; }
 			}
 		}
 }
@@ -123,20 +123,20 @@ Ghost::Ghost(const float X, const float Y,
 	const std::string& file, const std::string& first_anim) :
 	Entity(anims, file, first_anim, Entity_type::Ghost)
 {
-	health = 100;
-	w = GHOST_W; h = GHOST_H;
-	x = X; y = Y;
-	dx = 0; dy = 0;
-	name = "Ghost";
-	state = Entity_state::go;
+    health_ = 20;
+    w_ = GHOST_W; h_ = GHOST_H;
+    x_ = X; y_ = Y;
+    dx_ = 0; dy_ = 0;
+    name_ = "Ghost";
+    state_ = Entity_state::go;
 }
 
 void Ghost::Walk(const float X, const float Y) {
 
     static size_t rand_go_time = 0;
 
-	float dis_x = X - x;
-	float dis_y = Y - y;
+	float dis_x = X - x_;
+	float dis_y = Y - y_;
 	float dis = std::sqrt(int(dis_x * dis_x + dis_y * dis_y));
 	if (std::abs(dis) > 75) {
 		rand_go_time += 1;
@@ -148,80 +148,80 @@ void Ghost::Walk(const float X, const float Y) {
 		    int dir_x = k1 ? 1 : -1;
 		    int dir_y = k2 ? 1 : -1;
 
-		    dir = !(dir_x - 1);
-            dx = 0.03 * dir_x;
-            dy = 0.02 * dir_y;
+            dir_ = !(dir_x - 1);
+            dx_ = 0.03 * dir_x;
+            dy_ = 0.02 * dir_y;
 		}
 	}
 	else {
 		
 		if (dis_x >= 0 && dis_y >= 0) {
-			dir = true;
-			dx = 0.04;
-			dy = 0.03;
+            dir_ = true;
+            dx_ = 0.04;
+            dy_ = 0.03;
 		}
 		else if (dis_x > 0 && dis_y < 0) {
-            dir = true;
-            dx = 0.04;
-            dy = -0.03;
+            dir_ = true;
+            dx_ = 0.04;
+            dy_ = -0.03;
 		}
         else if (dis_x < 0 && dis_y > 0) {
-            dir = false;
-            dx = -0.04;
-            dy = 0.03;
+            dir_ = false;
+            dx_ = -0.04;
+            dy_ = 0.03;
         }
         else if (dis_x < 0 && dis_y < 0) {
-            dir = false;
-            dx = -0.04;
-            dy = -0.03;
+            dir_ = false;
+            dx_ = -0.04;
+            dy_ = -0.03;
         }
 	}
 }
 
-void Ghost::update(const float X, const float Y, const float& time, const std::vector<Object>& obj) {
-	if (dead) {
-		deadtime += time / 800000;
-		if (deadtime >= 3)
-			life = false;
+void Ghost::Update(const float X, const float Y, const float& time, const std::vector<Object>& obj) {
+	if (dead_) {
+        deadtime_ += time / 800000;
+		if (deadtime_ >= 3)
+            life_ = false;
 		else {
-			anim_map.tick(time);
+            anim_map_.Tick(time);
 		}
 	}
 	else {
 		Walk(X, Y);
 
-		anim_map.setAnimation("go");
+        anim_map_.SetAnimation("go");
 
 
-		anim_map.Direction(dir);
+        anim_map_.ChangeDirection(dir_);
 
-		x += dx * time / 800;
-		Colision('x', obj);
+        x_ += dx_ * time / 800;
+        Collide('x', obj);
 
-		y += dy * time / 800;
-		Colision('y', obj);
+        y_ += dy_ * time / 800;
+        Collide('y', obj);
 
-		if (health <= 0) {
-			dead = true;
-			anim_map.setAnimation("dead");
-			dx = 0; dy = 0;
+		if (health_ <= 0) {
+            dead_ = true;
+            anim_map_.SetAnimation("dead_");
+            dx_ = 0; dy_ = 0;
 		}
 
-		anim_map.tick(time);
+        anim_map_.Tick(time);
 	}
 }
 
-void Ghost::Colision(const char d, const std::vector<Object>& obj) {
+void Ghost::Collide(const char d, const std::vector<Object>& obj) {
 
     for (int i = 0; i < obj.size(); i++)
         if (GetRect().intersects(obj[i].rect))
         {
             if (obj[i].type == Object_type::solid)
             {
-                if (dy > 0 && d == 'y') { y = obj[i].rect.top - h;  dy *= -1;   state = Entity_state::stay; }
-                else if (dy < 0 && d == 'y') { y = obj[i].rect.top + obj[i].rect.height;   dy *= -1; }
-                else if (dx > 0 && d == 'x') { x = obj[i].rect.left - w; dx *= -1; }
-                else if (dx < 0 && d == 'x') { x = obj[i].rect.left + obj[i].rect.width; dx *= -1; }
+                if (dy_ > 0 && d == 'y') { y_ = obj[i].rect.top - h_; dy_ *= -1; state_ = Entity_state::stay; }
+                else if (dy_ < 0 && d == 'y') { y_ = obj[i].rect.top + obj[i].rect.height; dy_ *= -1; }
+                else if (dx_ > 0 && d == 'x') { x_ = obj[i].rect.left - w_; dx_ *= -1; }
+                else if (dx_ < 0 && d == 'x') { x_ = obj[i].rect.left + obj[i].rect.width; dx_ *= -1; }
             }
         }
 
@@ -235,19 +235,19 @@ Bullet::Bullet(
 	const std::string& file, const std::string& first_anim, const Entity_type _type) :
 	Entity(anims, file, first_anim, _type)
 {
-	life = true;
-	name = "Bullet";
-	health = 10;
+    life_ = true;
+    name_ = "Bullet";
+    health_ = 10;
 }
 
  
-void Bullet::Colision(const char d, const std::vector<Object>& obj) {
+void Bullet::Collide(const char d, const std::vector<Object>& obj) {
 	for (int i = 0; i < obj.size(); i++)
 		if (GetRect().intersects(obj[i].rect))
 		{
 			if (obj[i].type == Object_type::solid)
 			{
-				life = false;
+                life_ = false;
 			}
 		}
 }
@@ -258,18 +258,18 @@ HeroBullet::HeroBullet(const float X, const float Y,
 	const std::string& file, const std::string& first_anim, bool dir) :
 	Bullet(anims,file,first_anim, Entity_type::HeroBullet)
 {
-	x = X; y = Y; dx = (0.4 * (dir - 0.5)); dy = 0;
-	w = HERO_BUL_W; h=HERO_BUL_H;
-	name = "HeroBullet";
-	anim_map.setAnimation("go");
+    x_ = X; y_ = Y; dx_ = (0.4 * (dir - 0.5)); dy_ = 0;
+    w_ = HERO_BUL_W; h_=HERO_BUL_H;
+    name_ = "HeroBullet";
+    anim_map_.SetAnimation("go");
 }
 
-void HeroBullet::update(const float X, const float Y, const float& time, const std::vector<Object>& obj) {
+void HeroBullet::Update(const float X, const float Y, const float& time, const std::vector<Object>& obj) {
 	Walk(X, Y);
-	x += dx * time / 800;
-	Colision('x', obj);
+    x_ += dx_ * time / 800;
+    Collide('x', obj);
 
-	anim_map.tick(time);
+    anim_map_.Tick(time);
 }
 
 void HeroBullet::Walk(const float X, const float Y) {

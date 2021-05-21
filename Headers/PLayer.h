@@ -32,36 +32,36 @@ public:
 		std::map <std::string, p_vec_Rect>& anims,
 		const std::string& file, const std::string& first_anim);
 
-	void KeyPress(const std::string& name) { Keys[name] = true;}
+	void KeyPress(const std::string& name) { keys_[name] = true;}
 	void KeyReset() {
-		for (auto& i : Keys)
+		for (auto& i : keys_)
 			i.second = false;
 	}
 
 	void CheckKey();
-	void update(const float& time, const std::vector<Object>& obj, const std::vector <Entity*>& ent);
-	void Colision(const char d, const std::vector<Object> &obj, const std::vector <Entity*>& ent);
-	void draw(sf::RenderWindow &window) {
-		anim_map.draw(window, x, y);
+	void Update(const float& time, const std::vector<Object>& obj, const std::vector <Entity*>& ent);
+	void Collide(const char d, const std::vector<Object> &obj, const std::vector <Entity*>& ent);
+	void Draw(sf::RenderWindow &window) {
+        anim_map_.Draw(window, x_, y_);
 	}
-	sf::FloatRect GetRect() { return sf::FloatRect(x , y  , w , h ); };
-	float GetX() const { return x; };
-	float GetY() const { return y; };
-	bool GetDir() const { return dir; };
-    size_t GetLives() const {return health;};
+	sf::FloatRect GetRect() { return sf::FloatRect(x_ , y_  , w_ , h_ ); };
+	float GetX() const { return x_; };
+	float GetY() const { return y_; };
+	bool GetDir() const { return dir_; };
+    size_t GetLives() const {return health_;};
 
 private:
-	std::map <std::string, bool> Keys;
-	float x, y, dx, dy;
-	float ddx = 0, ddy = 0;
-	float w, h;
-	int health;
+	std::map <std::string, bool> keys_;
+	float x_, y_, dx_, dy_;
+	float ddx_ = 0, ddy_ = 0;
+	float w_, h_;
+	int health_;
 
-	Player_state state;
-	Player_feeling feel;
+	Player_state state_;
+	Player_feeling feel_;
 	
-	AnimationMap anim_map;
-	bool dir; //right - true, left - false
+	AnimationMap anim_map_;
+	bool dir_; //right - true, left - false
 	bool shoot = false;
 
 	float hit_time = 0;

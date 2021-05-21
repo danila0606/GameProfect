@@ -2,7 +2,7 @@
 
 
 Game::Game(const std::string& backgrnd, const std::string& mapName):
-	AllObjFrames(FramesLoader()), menu("Images//Background.png")
+        AllObjFrames_(FramesLoader()), menu_("Images//Background.png")
 {
 
 	//BackGround_t.loadFromFile(backgrnd);
@@ -10,7 +10,7 @@ Game::Game(const std::string& backgrnd, const std::string& mapName):
 
 	shoot_buf.loadFromFile("Images//shoot.ogg");
 	
-	lvl.LoadFromFile(mapName);
+	lvl_.LoadFromFile(mapName);
 			
 }
 std::map <const std::string, std::map <std::string, p_vec_Rect>>
@@ -78,7 +78,7 @@ Game::FramesLoader() {
 	std::vector<sf::IntRect> Coca_Dead_Frames_r = { sf::IntRect(194 + 14,33,-14,16),																				
 											 sf::IntRect(210 + 14,33,-14,16)};
 	p_vec_Rect Coca_Dead_Frames_pair = { Coca_Dead_Frames_l, Coca_Dead_Frames_r };
-	Coca_anims["dead"] = Coca_Dead_Frames_pair;
+	Coca_anims["dead_"] = Coca_Dead_Frames_pair;
 
 	allObjFrames["Coca"] = Coca_anims;
 	//////////////Coca_end/////////////////////
@@ -104,7 +104,7 @@ Game::FramesLoader() {
     std::vector<sf::IntRect> Ghost_Dead_Frames_r = { sf::IntRect(196 + 7,51,-7,13),
                                                     sf::IntRect(212 + 7,51,-7,13)};
     p_vec_Rect Ghost_Dead_Frames_pair = { Ghost_Dead_Frames_l, Ghost_Dead_Frames_r };
-    Ghost_anims["dead"] = Ghost_Dead_Frames_pair;
+    Ghost_anims["dead_"] = Ghost_Dead_Frames_pair;
 
 	allObjFrames["Ghost"] = Ghost_anims;
 
@@ -129,7 +129,7 @@ Game::FramesLoader() {
 
 }
 
-void Game::Colision(Player& player, std::vector<Entity*>& entities, std::vector<Bullet*>& bullets) {																							
+void Game::Collide(Player& player, std::vector<Entity*>& entities, std::vector<Bullet*>& bullets) {
 	for (auto iter = entities.begin(); iter != entities.end();) {
 		Entity* ent = *iter;
 		sf::FloatRect entRect = ent->GetRect();
@@ -162,7 +162,7 @@ void Game::Load() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game");
 
     while(true) {
-        if (!menu.Start(window))
+        if (!menu_.Start(window))
             return;
 
         if (!Start(window))
@@ -175,33 +175,33 @@ bool Game::Start(sf::RenderWindow& window) {
 
     //...........Loading Objects..............
 
-	if (AllObjFrames.count("player") == 0)
+	if (AllObjFrames_.count("player") == 0)
 	    throw std::runtime_error("Player anim not found!");
 
-	const Object* player_obj = lvl.GetObject(Object_type::player);
-	Player player(player_obj->rect.left, player_obj->rect.top,																											
-		AllObjFrames["player"], "Images//player.png", "stay");
+	const Object* player_obj = lvl_.GetObject(Object_type::player);
+	Player player(player_obj->rect.left, player_obj->rect.top,
+                  AllObjFrames_["player"], "Images//player.png", "stay");
 
-	const std::vector<Object> teleports = lvl.GetObjects(Object_type::tp);
+	const std::vector<Object> teleports = lvl_.GetObjects(Object_type::tp);
 
 	std::vector<Entity*> entities;
 	std::vector<Bullet*> bullets;
 
-	const std::vector<Object> ob_coca = lvl.GetObjects(Object_type::Coca);
-	if (!AllObjFrames.count("Coca"))
+	const std::vector<Object> ob_coca = lvl_.GetObjects(Object_type::Coca);
+	if (!AllObjFrames_.count("Coca"))
 	    throw std::runtime_error("Coca anim not found!");
 
 
-    const std::vector<Object> ob_ghost = lvl.GetObjects(Object_type::Ghost);
-    if (!AllObjFrames.count("Ghost"))
+    const std::vector<Object> ob_ghost = lvl_.GetObjects(Object_type::Ghost);
+    if (!AllObjFrames_.count("Ghost"))
         throw std::runtime_error("Ghost anim not found!");
 
     entities.reserve(ob_coca.size() + ob_ghost.size());
     for (auto & i : ob_coca)
-        entities.push_back(new Coca(i.rect.left, i.rect.top, AllObjFrames["Coca"], "Images//enemies.png", "go"));
+        entities.push_back(new Coca(i.rect.left, i.rect.top, AllObjFrames_["Coca"], "Images//enemies.png", "go"));
 
     for (auto & i : ob_ghost)
-		entities.push_back(new Ghost(i.rect.left, i.rect.top, AllObjFrames["Ghost"], "Images//enemies.png", "go"));
+		entities.push_back(new Ghost(i.rect.left, i.rect.top, AllObjFrames_["Ghost"], "Images//enemies.png", "go"));
 
 
     sf::Sound shoot(shoot_buf);
@@ -212,6 +212,8 @@ bool Game::Start(sf::RenderWindow& window) {
     sf::View pause_view(sf::FloatRect(0, 0, PAUSE_X, PAUSE_Y));
 
     sf::Clock clock;
+
+    killes_ = 0;
 
 	while (window.isOpen()) {
 
@@ -224,15 +226,15 @@ bool Game::Start(sf::RenderWindow& window) {
             }
 
 			if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code == sf::Keyboard::Space && bullet_time > BULLET_TIME) {
+				if (event.key.code == sf::Keyboard::Space && bullet_time_ > BULLET_TIME) {
 				    shoot.play();
-				    bullet_time -= BULLET_TIME;
+                    bullet_time_ -= BULLET_TIME;
 					bullets.push_back(new HeroBullet(player.GetX() + P_WIDTH/2, player.GetY() + P_HEIGHT/2,
-						AllObjFrames["HeroBullet"], "Images//player.png", "go", player.GetDir()));
+                                                     AllObjFrames_["HeroBullet"], "Images//player.png", "go", player.GetDir()));
 				}
 			}
 		}
-		Colision(player, entities, bullets);
+        Collide(player, entities, bullets);
 		float time = clock.getElapsedTime().asMicroseconds();
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) player.KeyPress("Right");
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) player.KeyPress("Left");
@@ -240,44 +242,44 @@ bool Game::Start(sf::RenderWindow& window) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) player.KeyPress("Down");
 
 		//............Pause...................
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && pause_time <= 0) {
-		    pause_time += 1000000;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && pause_time_ <= 0) {
+            pause_time_ += 1000000;
             //window.setView(pause_view);
-            if (!menu.Pause(window, player.GetX(), player.GetY()))
+            if (!menu_.Pause(window, player.GetX(), player.GetY()))
                 return false;
 
             window.setView(view);
 		}
         clock.restart();
 
-		if (pause_time > 0)
-		    pause_time -= time;
+		if (pause_time_ > 0)
+            pause_time_ -= time;
 
 
 		//...................................
 
-		spawn_time += time;
-		if (bullet_time < BULLET_TIME * BULLET_NUM)
-		    bullet_time += time;
+		spawn_time_ += time;
+		if (bullet_time_ < BULLET_TIME * BULLET_NUM)
+            bullet_time_ += time;
 
-		if (spawn_time >= SPAWN_TIME) {
-		    spawn_time -= SPAWN_TIME;
+		if (spawn_time_ >= SPAWN_TIME) {
+            spawn_time_ -= SPAWN_TIME;
             Spawn(teleports, entities);
 		}
 
-		player.update(time, lvl.GetAllObjects(), entities);
+        player.Update(time, lvl_.GetAllObjects(), entities);
 		for (auto it = entities.begin(); it != entities.end();) {
 
 			Entity* en = *it;
-			en->update(player.GetX(), player.GetY(), time, lvl.GetAllObjects());
-			if (!en->GetLife()) { it = entities.erase(it); delete en; killes += 1;}
+            en->Update(player.GetX(), player.GetY(), time, lvl_.GetAllObjects());
+			if (!en->GetLife()) { it = entities.erase(it); delete en; killes_ += 1;}
 			else 
 			    it++;
 		}
 		for (auto it = bullets.begin(); it != bullets.end();) {
 
 			Bullet* en = *it;
-			en->update(player.GetX(), player.GetY(), time, lvl.GetAllObjects());
+            en->Update(player.GetX(), player.GetY(), time, lvl_.GetAllObjects());
 			if (!en->GetLife()) {
 				it = bullets.erase(it); 
 				delete en; 
@@ -291,19 +293,19 @@ bool Game::Start(sf::RenderWindow& window) {
 		view.setCenter(player.GetX(), player.GetY());
 		window.setView(view);
 
-		lvl.Draw(window);
-		player.draw(window);
+		lvl_.Draw(window);
+        player.Draw(window);
 		for (auto en : entities)
 		    en->draw(window);
 
 		for (auto en : bullets)
 		    en->draw(window);
 
-		menu.DrawLives(window, player.GetLives(), player.GetX() - VIEW_X/2, player.GetY() - VIEW_Y/2);
+		menu_.DrawLives(window, player.GetLives(), player.GetX() - VIEW_X / 2, player.GetY() - VIEW_Y / 2);
 
 		if (player.GetLives() <= 0) {
 		    window.setView(end_view);
-		    menu.Died(window, player.GetX(), player.GetY(), killes);
+		    menu_.Died(window, player.GetX(), player.GetY(), killes_);
 		    return true;
 		}
 
@@ -320,10 +322,10 @@ void Game::Spawn(const std::vector<Object>& tps, std::vector<Entity*>& entities)
     for (size_t i = 0; i < num; ++i) {
 
         r = rand() % tps_num;
-        entities.push_back(new Coca(tps[r].rect.left, tps[r].rect.top, AllObjFrames["Coca"], "Images//enemies.png", "go"));
+        entities.push_back(new Coca(tps[r].rect.left, tps[r].rect.top, AllObjFrames_["Coca"], "Images//enemies.png", "go"));
 
         r = rand() % tps_num;
-        entities.push_back(new Ghost(tps[r].rect.left, tps[r].rect.top, AllObjFrames["Ghost"], "Images//enemies.png", "go"));
+        entities.push_back(new Ghost(tps[r].rect.left, tps[r].rect.top, AllObjFrames_["Ghost"], "Images//enemies.png", "go"));
 
     }
 

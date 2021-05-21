@@ -68,10 +68,10 @@ bool Menu::Start(sf::RenderWindow &window) {
 
             /*if (Options_button_rect.contains(sf::Mouse::getPosition(window))) {
                 choosed = Choosed_Button::Options;
-                window.draw(Options_button_s_pressed);
+                window.Draw(Options_button_s_pressed);
             }
             else
-                window.draw(Options_button_s);*/
+                window.Draw(Options_button_s);*/
 
             if (Exit_button_rect.contains(sf::Mouse::getPosition(window))) {
                 choosed = Choosed_Button::Exit;

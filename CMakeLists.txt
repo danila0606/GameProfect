@@ -9,7 +9,7 @@ project(game1)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
 add_executable(${PROJECT_NAME} main.cpp Source/Animation.cpp Source/Entity.cpp Source/Game.cpp
-                               Source/Level.cpp Source/parser.cpp Source/Player.cpp Source/tinyxml2.cpp Source/menu.cpp Headers/menu.h)
+                               Source/Level.cpp Source/parser.cpp Source/Player.cpp Source/tinyxml2.cpp Source/menu.cpp)
 
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-audio)
 

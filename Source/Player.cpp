@@ -5,23 +5,23 @@
 Player::Player(const float X, const float Y, const
 	std::map <std::string, p_vec_Rect>& anims,
 	const std::string& file, const std::string& first_anim) :
-	anim_map(file, anims, first_anim)
+        anim_map_(file, anims, first_anim)
 {
-	x = X; y = Y;
-	dx = 0; dy = 0;
-	w = P_WIDTH; h = P_HEIGHT;
-	health = LIVES;
-	dir = true;
-	feel = Player_feeling::no_hit;
-	state = Player_state::stay;
+    x_ = X; y_ = Y;
+    dx_ = 0; dy_ = 0;
+    w_ = P_WIDTH; h_ = P_HEIGHT;
+    health_ = LIVES;
+    dir_ = true;
+    feel_ = Player_feeling::no_hit;
+    state_ = Player_state::stay;
 	shoot = false;
 
-	Keys["Left" ] = false;
-	Keys["Right"] = false;
-	Keys["Up"   ] = false;
-	Keys["Down" ] = false;
-	Keys["Space"] = false;
-	Keys["Ctrl" ] = false;
+    keys_["Left" ] = false;
+    keys_["Right"] = false;
+    keys_["Up"   ] = false;
+    keys_["Down" ] = false;
+    keys_["Space"] = false;
+    keys_["Ctrl" ] = false;
 
 	jump_buf.loadFromFile("Images//jump.ogg");
 	jump_sound.setBuffer(jump_buf);
@@ -34,8 +34,8 @@ Player::Player(const float X, const float Y, const
 void Player::CheckKey() {
 
     if (hit > 0) {
-        dx = 0.01;
-        dy = -0.15;
+        dx_ = 0.01;
+        dy_ = -0.15;
         hit = false;
         return;
     }
@@ -43,66 +43,66 @@ void Player::CheckKey() {
     if (hit_time > 0)
         return;
 
-	if (Keys["Right"] && !Keys["Left"]) {
+	if (keys_["Right"] && !keys_["Left"]) {
 
-		dir = true;
-		dx = 0.1;
-		if (state == Player_state::stay)
-			state = Player_state::go;
+        dir_ = true;
+        dx_ = 0.1;
+		if (state_ == Player_state::stay)
+            state_ = Player_state::go;
 
-		if (state == Player_state::jump)
-			dx = 0.07;
+		if (state_ == Player_state::jump)
+            dx_ = 0.07;
 
 	}
-	if (!Keys["Right"] && Keys["Left"]) {
-		dir = false;
-		dx = -0.1;
+	if (!keys_["Right"] && keys_["Left"]) {
+        dir_ = false;
+        dx_ = -0.1;
 
-		if (state == Player_state::stay)
-			state = Player_state::go;
+		if (state_ == Player_state::stay)
+            state_ = Player_state::go;
 
-		if (state == Player_state::jump)
-			dx = -0.07;
+		if (state_ == Player_state::jump)
+            dx_ = -0.07;
 	}
-	if (Keys["Right"] && Keys["Left"]) {
+	if (keys_["Right"] && keys_["Left"]) {
 
-		if (state == Player_state::go)
-			state = Player_state::stay;
+		if (state_ == Player_state::go)
+            state_ = Player_state::stay;
 
-		dx = 0;
-	}
-
-	if (!Keys["Right"] && !Keys["Left"]) {
-
-		if (state == Player_state::go)
-			state = Player_state::stay;
-
-		dx = 0;
+        dx_ = 0;
 	}
 
-	if (Keys["Up"] && feel == Player_feeling::no_hit) {
+	if (!keys_["Right"] && !keys_["Left"]) {
+
+		if (state_ == Player_state::go)
+            state_ = Player_state::stay;
+
+        dx_ = 0;
+	}
+
+	if (keys_["Up"] && feel_ == Player_feeling::no_hit) {
 			
-		if (state == Player_state::stay || state == Player_state::go) {
-			state = Player_state::jump;
-			dy = -0.15;
+		if (state_ == Player_state::stay || state_ == Player_state::go) {
+            state_ = Player_state::jump;
+            dy_ = -0.15;
 		}
 	}
 	
-	if (!Keys["Up"] ) {
+	if (!keys_["Up"] ) {
 	
 
 	}
 
-	if (Keys["Ctrl"]) {
+	if (keys_["Ctrl"]) {
 		shoot = true;
 	}
-	if (!Keys["Ctrl"]) {
+	if (!keys_["Ctrl"]) {
 		shoot = false;
 	}
 
 }
 
-void Player::update(const float& time, const std::vector<Object>& obj, const std::vector <Entity*>& ent) {
+void Player::Update(const float& time, const std::vector<Object>& obj, const std::vector <Entity*>& ent) {
 
 	CheckKey();
 
@@ -111,49 +111,49 @@ void Player::update(const float& time, const std::vector<Object>& obj, const std
 
 	if (hit_time > 0) {
 	    hit_time -= time;
-        anim_map.setAnimation("hit");
+        anim_map_.SetAnimation("hit");
 	}
     else {
         hit_time = 0;
-        feel = Player_feeling::no_hit;
+        feel_ = Player_feeling::no_hit;
 
-        if (state == Player_state::stay)
-            anim_map.setAnimation("stay");
-        if (state == Player_state::go)
-            anim_map.setAnimation("go");
-        if (state == Player_state::jump)
-            anim_map.setAnimation("jump");
+        if (state_ == Player_state::stay)
+            anim_map_.SetAnimation("stay");
+        if (state_ == Player_state::go)
+            anim_map_.SetAnimation("go");
+        if (state_ == Player_state::jump)
+            anim_map_.SetAnimation("jump");
 
     }
 
-	anim_map.Direction(dir);
-			
-	x += dx * time / 800;
-	Colision('x', obj, ent);
+    anim_map_.ChangeDirection(dir_);
 
-	dy += time * 0.00000029;
-	y += dy * time /800;
-	Colision('y', obj, ent);
+    x_ += dx_ * time / 800;
+    Collide('x', obj, ent);
+
+    dy_ += time * 0.00000029;
+    y_ += dy_ * time / 800;
+    Collide('y', obj, ent);
 
 	KeyReset();
-	anim_map.tick(time);
+    anim_map_.Tick(time);
 }
 
-void Player::Colision(const char d, const std::vector<Object> &obj, const std::vector <Entity*>& ent) {
+void Player::Collide(const char d, const std::vector<Object> &obj, const std::vector <Entity*>& ent) {
 	
 	for (const auto & i : obj)
 		if (GetRect().intersects(i.rect)) {
 
 			if (i.type == Object_type::solid)
 			{
-				if (dy > 0 && d == 'y') { y = i.rect.top - h;  dy = 0;   state = Player_state::stay; }
-				else if (dy < 0 && d == 'y') { y = i.rect.top + i.rect.height;   dy = 0; }
-				else if (dx > 0 && d == 'x') { x = i.rect.left - w; }
-				else if (dx < 0 && d == 'x') { x = i.rect.left + i.rect.width; }
+				if (dy_ > 0 && d == 'y') { y_ = i.rect.top - h_; dy_ = 0; state_ = Player_state::stay; }
+				else if (dy_ < 0 && d == 'y') { y_ = i.rect.top + i.rect.height; dy_ = 0; }
+				else if (dx_ > 0 && d == 'x') { x_ = i.rect.left - w_; }
+				else if (dx_ < 0 && d == 'x') { x_ = i.rect.left + i.rect.width; }
 			}
 			else if (i.type == Object_type::jumper) {
-                dy = -0.3;
-                state = Player_state::jump;
+                dy_ = -0.3;
+                state_ = Player_state::jump;
                 jump_sound.play();
             }
             else if (i.type == Object_type::tp && tp_time <= 0) {
@@ -163,13 +163,16 @@ void Player::Colision(const char d, const std::vector<Object> &obj, const std::v
 
                     auto iter = std::find_if(it, obj.end(), [](const Object& ob) { return ob.type == Object_type::tp; });
                     tps.push_back(*it);
-                    it = iter + 1;
+                    if (iter != obj.end())
+                        it = iter + 1;
+                    else
+                        break;
                 }
 
                 int i = rand() % tps.size();
 
-                x = tps[i].rect.left;
-                y = tps[i].rect.top;
+                x_ = tps[i].rect.left;
+                y_ = tps[i].rect.top;
                 tp_time += 1000000;
             }
 		}
@@ -178,26 +181,26 @@ void Player::Colision(const char d, const std::vector<Object> &obj, const std::v
 
 			if (GetRect().intersects(ent->GetRect())) {
                 if (ent->GetType() == Entity_type::Coca) {
-                    if (feel == Player_feeling::no_hit && !ent->GetDead()) {
+                    if (feel_ == Player_feeling::no_hit && !ent->GetDead()) {
                         damage_sound.play();
-                        feel = Player_feeling::hit;
-                        health -= 1;
+                        feel_ = Player_feeling::hit;
+                        health_ -= 1;
                         hit_time = 1500000;
                         hit = true;
                     }
 
-                    if (dy > 0 && d == 'y') { state = Player_state::jump; dy *= -0.5;}
+                    if (dy_ > 0 && d == 'y') { state_ = Player_state::jump; dy_ *= -0.5;}
                         ent->Health(-200);
                 }
                 else if (ent->GetType() == Entity_type::Ghost) {
-                    if (feel == Player_feeling::no_hit && !ent->GetDead()) {
+                    if (feel_ == Player_feeling::no_hit && !ent->GetDead()) {
                         damage_sound.play();
-                        feel = Player_feeling::hit;
-                        health -= 1;
+                        feel_ = Player_feeling::hit;
+                        health_ -= 1;
                         hit_time = 1500000;
 
-                        if (dy > 0 && d == 'y')
-                            state = Player_state::jump; dy *= -0.5;
+                        if (dy_ > 0 && d == 'y')
+                            state_ = Player_state::jump; dy_ *= -0.5;
 
                         hit = true;
                         ent->Health(-200);

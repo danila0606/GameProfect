@@ -26,23 +26,23 @@ private:
 
     bool Start(sf::RenderWindow& window);
     static std::map <const std::string, std::map <std::string, p_vec_Rect>> FramesLoader();
-    void Colision(Player& player, std::vector<Entity*>& entities, std::vector<Bullet*>& bullets);
+    void Collide(Player& player, std::vector<Entity*>& entities, std::vector<Bullet*>& bullets);
 
     void Spawn(const std::vector<Object>& tps, std::vector<Entity*>& entities);
 
 private:
 
-	Level lvl;
-	Menu menu;
-	std::map <const std::string, std::map <std::string, p_vec_Rect>> AllObjFrames;
+	Level lvl_;
+	Menu menu_;
+	std::map <const std::string, std::map <std::string, p_vec_Rect>> AllObjFrames_;
 
 	//sf::Texture BackGround_t;
 	//sf::Sprite BackGround_s;
 
     sf::SoundBuffer shoot_buf;
 
-	float pause_time = 0;
-	float spawn_time = 0;
-	float bullet_time = 0;
-	size_t killes = 0;
+	float pause_time_ = 0;
+	float spawn_time_ = 0;
+	float bullet_time_ = 0; //delete, UML
+	size_t killes_ = 0;
 };
